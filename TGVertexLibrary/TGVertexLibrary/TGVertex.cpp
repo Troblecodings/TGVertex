@@ -1,11 +1,11 @@
 #include "TGVertex.hpp"
 
 bool TGVertexFile::hasColor() {
-	return this->header & 1 == 1;
+	return (this->header & 1) == 1;
 }
 
 bool TGVertexFile::hasUV() {
-	return this->header & 2 == 2;
+	return (this->header & 2) == 2;
 }
 
 Vertex* TGVertexFile::addVertex() {
@@ -30,7 +30,7 @@ void load_tgvertex_file(char* name, TGVertexFile* v_file) {
 
 	if (v_file->hasColor() && v_file->hasUV()) {
 		READ_AND_ADD(9,
-			READ_LINE(vert->color, 4); 
+			READ_LINE(vert->color, 4);
 		    READ_LINE(vert->uv, 2);)
 	} 
 	else if (v_file->hasUV()) {
@@ -42,7 +42,37 @@ void load_tgvertex_file(char* name, TGVertexFile* v_file) {
 			READ_LINE(vert->color, 4);)
 	}
 	else {
-		READ_AND_ADD(3)
+		READ_AND_ADD(3,)
 	}
 
+}
+
+void save_tgvertex_file(char* name, TGVertexFile* v_file) {
+	FILE* file = fopen(name, "wb");
+
+#ifdef DEBUG
+	if (file == NULL) {
+		OUT_LV_DEBUG("File " + name + " couldn't be opened, that shouldn't happen!");
+		return;
+	}
+#endif // DEBUG
+
+	fwrite(&v_file->header, sizeof(uint8_t), 1, file);
+
+	if (v_file->hasColor() && v_file->hasUV()) {
+		WRITE_AND_ADD(
+			WRITE_LINE(vertex.color, 4);
+		    WRITE_LINE(vertex.uv, 2);)
+	}
+	else if (v_file->hasUV()) {
+		WRITE_AND_ADD(
+			WRITE_LINE(vertex.uv, 2);)
+	}
+	else if (v_file->hasColor()) {
+		WRITE_AND_ADD(
+			WRITE_LINE(vertex.color, 4);)
+	}
+	else {
+		WRITE_AND_ADD(;)
+	}
 }
