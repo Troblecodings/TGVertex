@@ -7,6 +7,15 @@
 #include "stdbase.hpp"
 #include "Vertex.hpp"
 
+#ifdef USE_TGE
+#define ADD_TO_BUFFER(buffer, file) for (size_t i = 0; i < file.polygon_count; i++) {\
+glm::vec4 color = { file.color_list[i][0], file.color_list[i][1], file.color_list[i][2], file.color_list[i][3] };\
+for (Vertex vert : file.vertex_list[i]) {\
+buffer->add({ { vert.pos[0], vert.pos[1], vert.pos[2] }, color,{ vert.uv[0], vert.uv[1] }, vert.color_only });\
+}\
+}
+#endif
+
 #define READ_LINE(buf, count) fread(buf, sizeof(float), count, file);
 #define WRITE_LINE(buf, count) fwrite(buf, sizeof(float), count, file);
 

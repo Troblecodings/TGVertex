@@ -1,4 +1,4 @@
-#include "TGVertex.hpp"
+#include "TGVertexLib.hpp"
 
 bool TGVertexFile::hasColor() {
 	return (this->header & 1) == 1;

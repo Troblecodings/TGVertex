@@ -2,8 +2,9 @@
 
 #define DEBUG
 
-#include <TGVertex.hpp>
 #include <TGEngine.hpp>
+#define USE_TGE
+#include <TGVertexLib.hpp>
 
 struct Test : App {
 
