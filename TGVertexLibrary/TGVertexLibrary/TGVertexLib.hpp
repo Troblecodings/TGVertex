@@ -8,10 +8,10 @@
 #include "Vertex.hpp"
 
 #ifdef USE_TGE
-#define ADD_TO_BUFFER(buffer, file) for (size_t i = 0; i < file.polygon_count; i++) {\
+#define ADD_TO_BUFFER(buffer, file, color_only) for (size_t i = 0; i < file.polygon_count; i++) {\
 glm::vec4 color = { file.color_list[i][0], file.color_list[i][1], file.color_list[i][2], file.color_list[i][3] };\
 for (Vertex vert : file.vertex_list[i]) {\
-buffer->add({ { vert.pos[0], vert.pos[1], vert.pos[2] }, color,{ vert.uv[0], vert.uv[1] }, vert.color_only });\
+buffer->add({ { vert.pos[0], vert.pos[1], vert.pos[2] }, color,{ vert.uv[0], vert.uv[1] }, color_only });\
 }\
 }
 #endif
@@ -19,28 +19,16 @@ buffer->add({ { vert.pos[0], vert.pos[1], vert.pos[2] }, color,{ vert.uv[0], ver
 #define READ_LINE(buf, count) fread(buf, sizeof(float), count, file);
 #define WRITE_LINE(buf, count) fwrite(buf, sizeof(float), count, file);
 
-#ifdef DEBUG
-#define READ_AND_ADD(append)for (size_t i = 0; i < length; i++)\
-{\
-Vertex* vert = v_file->addVertex(); \
-READ_LINE(vert->pos, 3); \
-append\
-}
-#else
 #define READ_AND_ADD(append) for (size_t i = 0; i < length; i++)\
 {\
 Vertex* vert = v_file->addVertex(pylogen);\
 READ_LINE(vert->pos, 3);\
 append\
 }
-#endif // DEBUG
 
-#define WRITE_AND_ADD(append) for(size_t i = 0; i < length; i++)\
-{\
-for(Vertex vertex : v_file->vertex_list[i]){\
+#define WRITE_AND_ADD(append) for(Vertex vertex : v_file->vertex_list[pylogen]){\
 WRITE_LINE(vertex.pos, 3);\
 append\
-}\
 }
 
 struct TGVertexFile {
@@ -51,7 +39,7 @@ struct TGVertexFile {
 	std::vector<uint32_t> texture_index = {};
 	std::vector<float*> color_list = {};
 
-	uint32_t version; //One of the defined macros (e.g. TGV_VERSION_0_0_1)
+	uint32_t version = TGV_VERSION_0_0_2; //One of the defined macros (e.g. TGV_VERSION_0_0_2)
 	uint32_t polygon_count;
 
 	bool hasColor();
